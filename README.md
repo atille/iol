@@ -50,3 +50,17 @@ c= stands for content
 * Synchronisation between computers
 * **Display tasks by ID**
 * **Display tasks when running --show open|closed|pending**
+* **Subtasks with an easy-to-write method**
+
+## Subtasks
+
+Currently not available on iol.jl, but here's a PoC.
+
+```bash
+./iol --add|a "sub=note_id&c=this is a subtask"
+./iol --show|s note_id
+77HD	| ... ... .. | This is the main note
+|> 1	| ... ... .. | This is a subtask!
+
+./iol --update|u "i=77HD:1&s=close"
+```
