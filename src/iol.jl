@@ -39,7 +39,7 @@ module Iol
 		if argument == "all"
 			map(readdir("tasks/")) do x
 				map(readdir("tasks/$x/")) do y
-					println(y)
+					println(get_task_content("tasks/$x/$y"))
 				end
 			end
 		end
@@ -49,6 +49,32 @@ module Iol
 				println(x)
 			end
 		end
+	end
+
+	function get_task_content(path::String)
+	
+		isfile(path) || println("Task $path doesn't exist.")
+
+		f = open(path)
+
+		output_content = ""
+		for line in eachline(f)
+			t_key, t_value = split(line, "&&:")
+
+			if isequal(t_key, "ID")
+				output_content = string(output_content, t_value)
+			end
+
+			if isequal(t_key, "DATE")
+				output_content = string(output_content, " | ", t_value)
+			end
+
+			if isequal(t_key, "CONTENT")
+				output_content = string(output_content, " | ", t_value)
+			end
+		end
+
+		return output_content
 	end
 
 	function add_task(operation::String, argument::String)
@@ -63,7 +89,9 @@ module Iol
 	function save_task(content::AbstractString, task_date::DateTime, status::AbstractString)
 		
 		current_time = now()
+		noteid = randstring(4)
 		f = open(string("tasks/", status, "/", current_time, ".iolt"), "a+")
+		write(f, string("ID&&:", noteid, "\n"))
 		write(f, string("DATE&&:", task_date, "\n"))
 		write(f, string("STATUS&&:", status, "\n"))
 		write(f, string("CONTENT&&:", content, "\n"))
